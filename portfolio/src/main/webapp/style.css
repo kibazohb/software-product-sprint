@@ -50,3 +50,8 @@ ul{
 .box li a:hover{
   color: #b9b9b9;
 }
+#content {
+  margin-left: auto;
+  margin-right: auto;
+  width: 650px;
+}
