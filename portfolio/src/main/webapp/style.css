@@ -55,3 +55,7 @@ ul{
   margin-right: auto;
   width: 650px;
 }
+
+#name-container {
+  margin-top: 20px;
+}
