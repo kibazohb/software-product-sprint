@@ -1,3 +1,4 @@
+
 //this is the script js file to generate the name.
 
 function getMyName() {
