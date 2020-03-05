@@ -44,5 +44,26 @@ public class DataServlet extends HttpServlet {
     return json;
   }
 
+//   @Override
+//   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//     // Get the input from the form.
+//     String comment = getComment(request, "text-input", "");
+
+
+
+//   }
+//   /**
+//    * @return the request parameter, or the default value if the parameter
+//    *         was not specified by the client
+//    */
+//   private String getComment(HttpServletRequest request, String text, String defaultValue) {
+//     String value = request.getComment(text);
+//     if (value == null) {
+//       return defaultValue;
+//     }
+//     return value;
+//   }
+  
+
 
 }
