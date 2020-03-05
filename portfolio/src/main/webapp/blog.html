@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="styles/article.css">
         <link rel="stylesheet" href="styles/article-image.css">
         <link rel="stylesheet" href="styles/article-text.css">
+        <link rel="stylesheet" href="styles/comments.css">
     </head>
     <body>
         <article id='The untold-1'>
@@ -58,5 +59,17 @@
                 More text
             </p>        
         </article>
+        <div class="comment-section">
+          <h1>Commments Section</h1>
+          <form action="/text" method="POST">
+
+          <p>Enter comments below</p>
+          <textarea name="text-input">Share your thoughts : ) </textarea>
+          <br/><br/>
+          <input type="submit" />
+
+          </form>
+          <br/><br/>
+        </div>  
     <body>
 </html>                
