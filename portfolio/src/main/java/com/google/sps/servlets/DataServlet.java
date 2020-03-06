@@ -14,9 +14,8 @@
 
 package com.google.sps.servlets;
 
-import java.io.IOException;
-import java.io.*; 
-import java.util.*;
+import java.io.IOException; 
+import java.util.ArrayList;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -29,15 +28,26 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  ArrayList<String> facts = new ArrayList<String>();
+  ArrayList<String> comments = new ArrayList<String>();
   DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String json = convertToJsonUsingGson(facts);
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    PreparedQuery results = datastore.prepare(query);
+
+    for (Entity entity : results.asIterable()) {
+      long id = entity.getKey().getId();
+      String comment = (String) entity.getProperty("Content");
+
+      comments.add(comment);
+    }
+    
+    String json = convertToJsonUsingGson(comments);
     response.setContentType("application/json;");
     response.getWriter().println(json);
   }
+
   private String convertToJsonUsingGson(ArrayList<String> facts) {
     Gson gson = new Gson();
     String json = gson.toJson(facts);
@@ -47,8 +57,11 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String comment = getParameter(request, "text-input", "");
+    long timestamp = System.currentTimeMillis();
     Entity commentEntity = new Entity("Comment");
+    
     commentEntity.setProperty("Content", comment);
+    commentEntity.setProperty("timestamp", timestamp);
     datastore.put(commentEntity);
     
     response.sendRedirect("/blog.html");
