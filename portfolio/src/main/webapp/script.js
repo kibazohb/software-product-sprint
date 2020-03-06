@@ -1,9 +1,9 @@
 
 //this is the script js file to get sample data from server
 
-/** Fetches all facts */
+/** Fetches all comments */
 
-function getMyFacts() {
+function getMyComments() {
     fetch("/data").then(response => response.json()).then((comments) => {
         const commentsListElement = document.getElementById('liElement-container');
         commentsListElement.innerHTML = '';
