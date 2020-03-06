@@ -17,6 +17,9 @@ package com.google.sps.servlets;
 import java.io.IOException;
 import java.io.*; 
 import java.util.*;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import com.google.gson.Gson;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -26,14 +29,11 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
+  ArrayList<String> facts = new ArrayList<String>();
+  DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    ArrayList<String> facts = new ArrayList<String>();
-    facts.add("I am from Tanzania");
-    facts.add("I am a huge basketball fan");
-    facts.add("Kevin Durants douple ganger");
-    //String name = "Brian Kibazohi";
     String json = convertToJsonUsingGson(facts);
     response.setContentType("application/json;");
     response.getWriter().println(json);
@@ -44,25 +44,27 @@ public class DataServlet extends HttpServlet {
     return json;
   }
 
-//   @Override
-//   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//     // Get the input from the form.
-//     String comment = getComment(request, "text-input", "");
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String comment = getParameter(request, "text-input", "");
+    Entity commentEntity = new Entity("Comment");
+    commentEntity.setProperty("Content", comment);
+    datastore.put(commentEntity);
+    
+    response.sendRedirect("/blog.html");
 
-
-
-//   }
-//   /**
-//    * @return the request parameter, or the default value if the parameter
-//    *         was not specified by the client
-//    */
-//   private String getComment(HttpServletRequest request, String text, String defaultValue) {
-//     String value = request.getComment(text);
-//     if (value == null) {
-//       return defaultValue;
-//     }
-//     return value;
-//   }
+  }
+  /**
+   * @return the request parameter, or the default value if the parameter
+   *         was not specified by the client
+   */
+  private String getParameter(HttpServletRequest request, String text, String defaultValue) {
+    String value = request.getParameter(text);
+    if (value == null) {
+      return defaultValue;
+    }
+    return value;
+  }
   
 
 
