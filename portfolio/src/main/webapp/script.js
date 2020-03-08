@@ -8,7 +8,7 @@ function getMyComments() {
         const commentsListElement = document.getElementById('liElement-container');
         commentsListElement.innerHTML = '';
         for (const element of comments) {
-            commentsListElement.appendChild(createListElement(element));
+            commentsListElement.appendChild(createListElement(element.content));
         }
     });
 }
