@@ -10,6 +10,9 @@
         <link rel="stylesheet" href="styles/article.css">
         <link rel="stylesheet" href="styles/article-image.css">
         <link rel="stylesheet" href="styles/article-text.css">
+        <link rel="stylesheet" href="styles/comments.css">
+        <link rel="stylesheet" href="style.css">
+        <script src="script.js"></script>
     </head>
     <body>
         <article id='The untold-1'>
@@ -58,5 +61,19 @@
                 More text
             </p>        
         </article>
+        <div class="comment-section">
+          <h1>Commments Section</h1>
+          <form action="/data" method="POST">
+
+          <p>Enter comments below</p>
+          <textarea name="text-input"> </textarea>
+          <br/><br/>
+          <input type="submit" />
+
+          </form>
+          <button onclick="getMyComments()">Load Comments here.</button>
+          <div id="liElement-container"></div>
+          <br/><br/>
+        </div>  
     <body>
 </html>                

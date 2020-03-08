@@ -10,3 +10,4 @@ article * { grid-column: start /end; }
 @media (max-width: 8.5in) {
     article { grid-template-columns: lfr 5% [start] 15% 60% 15% [end] 5% lfr}
 }
+
