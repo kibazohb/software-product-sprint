@@ -7,7 +7,7 @@ public final class Comment {
   private final String content;
   private final long timestamp;
 
-  public Task(long id, String title, long timestamp) {
+  public Comment(long id, String title, long timestamp) {
     this.id = id;
     this.content = content;
     this.timestamp = timestamp;
