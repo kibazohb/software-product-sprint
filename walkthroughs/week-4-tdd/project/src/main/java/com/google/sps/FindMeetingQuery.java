@@ -28,14 +28,55 @@ public final class FindMeetingQuery {
 
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
  
-    if (events == null) {
+    if (request.getAttendees().size() == 0) {
         result.add(TimeRange.WHOLE_DAY);
+        return result;
     }
+
     //sort the events by startTime
     ArrayList<Event> eventList = new ArrayList<Event>(events); 
-
     Collections.sort(eventList, Event.EVENT_START_COMPARATOR);
 
+    TimeRange TIME_ENDPOINTS = TimeRange.fromStartDuration(TimeRange.END_OF_DAY, TimeRange.START_OF_DAY);
+    int duration = (int) request.getDuration();
+    TimeRange firstMeetingTime = eventList.get(0).getWhen();
+    TimeRange lastMeetingTime = eventList.get(eventList.size() - 1).getWhen();
+
+    if (meetingTimeWillFit(TIME_ENDPOINTS,firstMeetingTime, duration)) {
+        result.add(TimeRange.fromStartEnd(TIME_ENDPOINTS.end(), firstMeetingTime.start(), false));
+    }
+
+    int curr_ptr = 0;
+    int next_ptr = curr_ptr + 1;
+
+    while (next_ptr < eventList.size()) {
+        TimeRange currMeetingTime = eventList.get(curr_ptr).getWhen();
+        TimeRange nextMeetingTime = eventList.get(next_ptr).getWhen();
+        
+        if (currMeetingTime.contains(nextMeetingTime)) {
+            next_ptr += 1;
+            continue;
+        }
+
+        if (!nextMeetingTime.overlaps(currMeetingTime)) {
+          
+          if (meetingTimeWillFit(currMeetingTime, nextMeetingTime, duration)) {
+              result.add(TimeRange.fromStartEnd(currMeetingTime.end(), nextMeetingTime.start(), false));     
+          }
+        }
+        curr_ptr = next_ptr;
+        next_ptr += 1;
+    }
+
+    if (meetingTimeWillFit(lastMeetingTime, TIME_ENDPOINTS, duration)) {
+        result.add(TimeRange.fromStartEnd(lastMeetingTime.end(), TIME_ENDPOINTS.start(), true));
+    }
+    System.out.println(result);
+    System.out.println("hi");
     return result;
+  }
+   
+  public static boolean meetingTimeWillFit(TimeRange currMeetingTime, TimeRange nextMeetingTime, int duration) {
+      return (nextMeetingTime.start() - currMeetingTime.end() >= duration);
   }
 }
