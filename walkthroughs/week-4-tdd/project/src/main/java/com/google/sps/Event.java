@@ -14,6 +14,7 @@
 
 package com.google.sps;
 
+import java.util.Comparator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -24,6 +25,14 @@ import java.util.Set;
  * busy. Events are considered read-only.
  */
 public final class Event {
+
+  public static final Comparator<Event> EVENT_START_COMPARATOR = new Comparator<Event>() {
+    @Override
+    public int compare(Event a, Event b) {
+      return TimeRange.ORDER_BY_START.compare(a.getWhen(), b.getWhen());
+    }
+  };
+
   private final String title;
   private final TimeRange when;
   private final Set<String> attendees = new HashSet<>();
