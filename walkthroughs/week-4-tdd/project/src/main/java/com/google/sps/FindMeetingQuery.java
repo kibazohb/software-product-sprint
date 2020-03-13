@@ -24,15 +24,18 @@ import java.util.Collections;
 import java.lang.Math;
 import java.util.ArrayList;
 import java.util.HashSet;
-import com.google.common.collect.Sets;
-import java.util.Set;
 
 public final class FindMeetingQuery {
   private static HashSet<TimeRange> result = new HashSet<TimeRange>();
 
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
+
+    if ((int) request.getDuration() > TimeRange.END_OF_DAY) {
+        ArrayList<TimeRange> final_result = new ArrayList<TimeRange>(result);
+        return final_result;
+    }  
  
-    if (request.getAttendees().size() == 0) {
+    if (request.getAttendees().size() == 0 || events.size() == 0) {
         result.add(TimeRange.WHOLE_DAY);
         ArrayList<TimeRange> final_result = new ArrayList<TimeRange>(result);
         return final_result;
