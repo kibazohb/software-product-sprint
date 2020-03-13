@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.ArrayList;
 
 public final class FindMeetingQuery {
-  private static Collection<TimeRange> result = Collections.emptySet();
+  private static Collection<TimeRange> result = new ArrayList<TimeRange>();
 
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
  
@@ -45,7 +45,7 @@ public final class FindMeetingQuery {
     if (meetingTimeWillFit(TIME_ENDPOINTS,firstMeetingTime, duration)) {
         result.add(TimeRange.fromStartEnd(TIME_ENDPOINTS.end(), firstMeetingTime.start(), false));
     }
-
+    System.out.println(result);
     int curr_ptr = 0;
     int next_ptr = curr_ptr + 1;
 
