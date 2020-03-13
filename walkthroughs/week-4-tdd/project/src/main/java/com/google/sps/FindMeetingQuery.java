@@ -21,31 +21,37 @@ package com.google.sps;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.lang.Math;
 import java.util.ArrayList;
+import java.util.HashSet;
+import com.google.common.collect.Sets;
+import java.util.Set;
 
 public final class FindMeetingQuery {
-  private static Collection<TimeRange> result = new ArrayList<TimeRange>();
+  private static HashSet<TimeRange> result = new HashSet<TimeRange>();
 
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
  
     if (request.getAttendees().size() == 0) {
         result.add(TimeRange.WHOLE_DAY);
-        return result;
+        ArrayList<TimeRange> final_result = new ArrayList<TimeRange>(result);
+        return final_result;
+        //return result;
     }
 
     //sort the events by startTime
     ArrayList<Event> eventList = new ArrayList<Event>(events); 
-    Collections.sort(eventList, Event.EVENT_START_COMPARATOR);
+    //Collections.sort(eventList, Event.EVENT_START_COMPARATOR);
 
-    TimeRange TIME_ENDPOINTS = TimeRange.fromStartDuration(TimeRange.END_OF_DAY, TimeRange.START_OF_DAY);
+    TimeRange TIME_ENDPOINTS = TimeRange.fromStartDuration(TimeRange.START_OF_DAY, TimeRange.END_OF_DAY);
     int duration = (int) request.getDuration();
     TimeRange firstMeetingTime = eventList.get(0).getWhen();
     TimeRange lastMeetingTime = eventList.get(eventList.size() - 1).getWhen();
 
-    if (meetingTimeWillFit(TIME_ENDPOINTS,firstMeetingTime, duration)) {
-        result.add(TimeRange.fromStartEnd(TIME_ENDPOINTS.end(), firstMeetingTime.start(), false));
+    if (firstMeetingTime.start() - TIME_ENDPOINTS.start() >= duration) {
+        result.add(TimeRange.fromStartEnd(TIME_ENDPOINTS.start(), firstMeetingTime.start(), false));
     }
-    System.out.println(result);
+    
     int curr_ptr = 0;
     int next_ptr = curr_ptr + 1;
 
@@ -61,19 +67,26 @@ public final class FindMeetingQuery {
         if (!nextMeetingTime.overlaps(currMeetingTime)) {
           
           if (meetingTimeWillFit(currMeetingTime, nextMeetingTime, duration)) {
-              result.add(TimeRange.fromStartEnd(currMeetingTime.end(), nextMeetingTime.start(), false));     
+              result.add(TimeRange.fromStartEnd(currMeetingTime.end(), nextMeetingTime.start(), false)); 
+       
           }
         }
         curr_ptr = next_ptr;
         next_ptr += 1;
     }
-
-    if (meetingTimeWillFit(lastMeetingTime, TIME_ENDPOINTS, duration)) {
-        result.add(TimeRange.fromStartEnd(lastMeetingTime.end(), TIME_ENDPOINTS.start(), true));
+    
+    lastMeetingTime = eventList.get(curr_ptr).getWhen();
+    if (TIME_ENDPOINTS.end() - lastMeetingTime.end() >= duration) {
+        result.add(TimeRange.fromStartEnd(lastMeetingTime.end(), TIME_ENDPOINTS.end(), true));
     }
-    System.out.println(result);
-    System.out.println("hi");
-    return result;
+    
+    ArrayList<TimeRange> final_result = new ArrayList<TimeRange>(result);
+    Collections.sort(final_result, TimeRange.ORDER_BY_START);
+
+    for (TimeRange times: final_result){
+        System.out.println(times);
+    }
+    return final_result;
   }
    
   public static boolean meetingTimeWillFit(TimeRange currMeetingTime, TimeRange nextMeetingTime, int duration) {
